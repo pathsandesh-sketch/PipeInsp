@@ -1,0 +1,17 @@
+1. Robot starts moving forward (3 seconds)
+Both motors spin forward
+Robot goes straight ahead
+2. Robot turns left (2 seconds)
+Left motor reverses
+Right motor moves forward
+Robot rotates left (on the spot or in an arc)
+3. Robot turns right (2 seconds)
+Left motor moves forward
+Right motor reverses
+Robot rotates right
+4. Robot moves backward (3 seconds)
+Both motors reverse
+Robot goes straight backward
+5. Robot stops
+Motors stop completely
+No movement
