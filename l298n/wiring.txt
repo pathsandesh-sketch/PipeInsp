@@ -1,0 +1,9 @@
+| L298N | Raspberry Pi GPIO    |
+| ----- | -------------------- |
+| IN1   | GPIO17 (pin 11)      |
+| IN2   | GPIO27 (pin 13)      |
+| IN3   | GPIO22 (pin 15)      |
+| IN4   | GPIO23 (pin 16)      |
+| ENA   | GPIO18 (pin 12, PWM) |
+| ENB   | GPIO13 (pin 33, PWM) |
+| GND   | GND (pin 6)          |
