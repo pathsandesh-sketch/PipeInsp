@@ -186,26 +186,33 @@ HTML_INTERFACE = """
             fetch('/sensor_json')
                 .then(res => res.json())
                 .then(data => {
-                    // Match numbers out of the raw text string using regex
-                    let numbers = data.raw.match(/[-+]?\\d*\\.?\\d+/g);
+                    // Split the incoming string by the pipe character '|'
+                    let parts = data.raw.split('|');
                     
-                    if (numbers && numbers.length >= 3) {
+                    if (parts.length >= 3) {
                         let timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                         
-                        // Push new values into dataset lists
-                        gasChart.data.labels.push(timestamp);
-                        gasChart.data.datasets[0].data.push(parseFloat(numbers[0]));
-                        gasChart.data.datasets[1].data.push(parseFloat(numbers[1]));
-                        gasChart.data.datasets[2].data.push(parseFloat(numbers[2]));
-                        
-                        // Drop oldest data point to create scrolling animation timeline
-                        if (gasChart.data.labels.length > maxDataPoints) {
-                            gasChart.data.labels.shift();
-                            gasChart.data.datasets[0].data.shift();
-                            gasChart.data.datasets[1].data.shift();
-                            gasChart.data.datasets[2].data.shift();
+                        // Extract values safely by splitting on the colon ':' and parsing what's left
+                        let mq7Value   = parseFloat(parts[0].split(':').pop().trim());
+                        let mq135Value = parseFloat(parts[1].split(':').pop().trim());
+                        let mq4Value   = parseFloat(parts[2].split(':').pop().trim());
+
+                        // Double check that we have real numbers before pushing to Chart.js
+                        if (!isNaN(mq7Value) && !isNaN(mq135Value) && !isNaN(mq4Value)) {
+                            gasChart.data.labels.push(timestamp);
+                            gasChart.data.datasets[0].data.push(mq7Value);   // MQ-7 (CO)
+                            gasChart.data.datasets[1].data.push(mq135Value); // MQ-135 (Air Quality)
+                            gasChart.data.datasets[2].data.push(mq4Value);   // MQ-4 (Methane)
+                            
+                            // Drop oldest data point to create scrolling animation timeline
+                            if (gasChart.data.labels.length > maxDataPoints) {
+                                gasChart.data.labels.shift();
+                                gasChart.data.datasets[0].data.shift();
+                                gasChart.data.datasets[1].data.shift();
+                                gasChart.data.datasets[2].data.shift();
+                            }
+                            gasChart.update('none'); // Quick silent canvas render
                         }
-                        gasChart.update('none'); // Quick silent canvas render
                     }
                 })
                 .catch(err => console.log("Chart sync skip"));
